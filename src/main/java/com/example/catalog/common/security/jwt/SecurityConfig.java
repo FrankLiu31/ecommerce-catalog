@@ -27,17 +27,18 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/", "/api/authenticate", "/login", "/product-catalog", "/products/**", "/css/**", "/js/**").permitAll()
-                                .anyRequest().authenticated()
+//                        .requestMatchers("/", "/api/authenticate", "/login", "/products/main", "/products/new", "/css/**", "/js/**").permitAll()
+                                .requestMatchers("/", "/api/authenticate", "/login", "/products/**", "/css/**", "/js/**").permitAll()
+//                        .requestMatchers("/products/**", "/api/products/**").authenticated()
+                        .requestMatchers( "/api/products/**").authenticated()
+                        .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .exceptionHandling(exceptions -> exceptions
-                        // Configure authentication entry point to redirect to the login page on a 401 Unauthorized error
                         .authenticationEntryPoint((request, response, authException) -> {
-                            // This ensures that when a 401 is returned, the browser is redirected.
-                            response.sendRedirect("/login");
+                            response.sendRedirect("/login?error=true");
                         })
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
