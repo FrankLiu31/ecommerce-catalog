@@ -1,10 +1,10 @@
 package com.example.catalog.product.controller;
 
+import com.example.catalog.common.exception.NotFoundException;
 import com.example.catalog.product.dto.ProductDto;
 import com.example.catalog.product.entity.Product;
 import com.example.catalog.product.service.ProductService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,8 +46,18 @@ public class ProductController {
     public ResponseEntity<Product> getProductById(@PathVariable Long id) {
         return productService.findById(id)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElseThrow(() -> new NotFoundException("Product with ID " + id + " not found."));
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<Product>> searchProducts(
+            @RequestParam(required = false) String searchQuery,
+            @RequestParam(required = false) Double minPrice,
+            @RequestParam(required = false) Double maxPrice) {
+        return ResponseEntity.ok(productService.searchProducts(searchQuery, minPrice, maxPrice));
+    }
+
+
 
     /**
      * CREATE: Creates a new product.
@@ -82,9 +92,8 @@ public class ProductController {
             existingProduct.setName(productDto.getName());
             existingProduct.setDescription(productDto.getDescription());
             existingProduct.setPrice(productDto.getPrice());
-            Product updatedProduct = productService.save(existingProduct);
-            return ResponseEntity.ok(updatedProduct);
-        }).orElse(ResponseEntity.notFound().build());
+            return ResponseEntity.ok(productService.save(existingProduct));
+        }).orElseThrow(() -> new NotFoundException("Product with ID " + id + " not found."));
     }
 
     /**
@@ -97,6 +106,9 @@ public class ProductController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
+        if (!productService.findById(id).isPresent()) {
+            throw new NotFoundException("Product with ID " + id + " not found.");
+        }
         productService.deleteById(id);
         return ResponseEntity.ok().build();
     }
