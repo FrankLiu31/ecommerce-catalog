@@ -32,8 +32,8 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         final String authorizationHeader = request.getHeader("Authorization");
-//        logger.info("Processing request: {} {}", request.getMethod(), request.getRequestURI());
-//        logger.info("Authorization header: {}", authorizationHeader);
+        logger.debug("Processing request: {} {}", request.getMethod(), request.getRequestURI());
+        logger.debug("Authorization header: {}", authorizationHeader);
 
         String username = null;
         String jwt = null;
@@ -42,13 +42,12 @@ public class JwtFilter extends OncePerRequestFilter {
             jwt = authorizationHeader.substring(7);
             try {
                 username = jwtUtil.extractUsername(jwt);
-                logger.info("Extracted username from JWT: {}", username);
+                logger.debug("Extracted username from JWT: {}", username);
             } catch (Exception e) {
-                logger.info("Failed to extract username from JWT: {}", e.getMessage());
+                logger.debug("Failed to extract username from JWT: {}", e.getMessage());
             }
         } else {
-//            logger.info("No valid Authorization header found");
-            logger.info("Processing request: {} {} and No valid Authorization header found", request.getMethod(), request.getRequestURI());
+            logger.debug("No valid Authorization header found");
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -58,9 +57,9 @@ public class JwtFilter extends OncePerRequestFilter {
                         userDetails, null, userDetails.getAuthorities());
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
-                logger.info("Authentication set for user: {}", username);
+                logger.debug("Authentication set for user: {}", username);
             } else {
-                logger.info("JWT validation failed for user: {}", username);
+                logger.debug("JWT validation failed for user: {}", username);
             }
         }
 

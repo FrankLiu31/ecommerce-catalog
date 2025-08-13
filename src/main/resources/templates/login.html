@@ -23,7 +23,6 @@
             };
             const errorDiv = document.getElementById('error');
             errorDiv.textContent = '';
-            console.log('Attempting login with:', loginData.username);
             try {
                 const response = await fetch('/api/authenticate', {
                     method: 'POST',
@@ -32,35 +31,26 @@
                     },
                     body: JSON.stringify(loginData)
                 });
-                console.log('Response status:', response.status);
-                console.log('Response headers:', [...response.headers.entries()]);
                 if (response.ok) {
                     const responseBody = await response.text();
-                    console.log('Raw response:', responseBody);
                     let data;
                     try {
                         data = JSON.parse(responseBody);
                     } catch (e) {
-                        console.error('Failed to parse response as JSON:', e);
                         errorDiv.textContent = 'Invalid response format from server';
                         return;
                     }
-                    console.log('Parsed response:', data);
                     if (data.jwt) {
                         localStorage.setItem('jwt', data.jwt);
-                        console.log('JWT stored in localStorage:', data.jwt.substring(0, 10) + '...');
                         window.location.href = '/products/main';
                     } else {
-                        console.error('No JWT in response:', data);
                         errorDiv.textContent = 'Login succeeded but no JWT received';
                     }
                 } else {
                     const errorText = await response.text();
-                    console.error('Login failed with status:', response.status, errorText);
                     errorDiv.textContent = errorText || 'Invalid username or password';
                 }
             } catch (error) {
-                console.error('Login error:', error);
                 errorDiv.textContent = 'Login failed: ' + error.message;
             }
         }

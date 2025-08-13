@@ -21,7 +21,6 @@
             errorDiv.textContent = '';
             errorDiv.classList.add('hidden');
             if (!token) {
-                console.log('No JWT found, redirecting to login');
                 errorDiv.textContent = 'Please log in to access this page';
                 errorDiv.classList.remove('hidden');
                 setTimeout(() => { window.location.href = '/login?error=true'; }, 2000);
@@ -42,7 +41,6 @@
             const method = form.getAttribute('data-method');
 
             try {
-                console.log(`Saving product (method: ${method}):`, productData);
                 const response = await fetch(url, {
                     method: method,
                     headers: {
@@ -51,7 +49,6 @@
                     },
                     body: JSON.stringify(productData)
                 });
-                console.log('Save product response status:', response.status);
                 if (response.ok) {
                     window.location.href = '/products/main';
                 } else if (response.status === 401) {
@@ -65,7 +62,6 @@
                     errorDiv.classList.remove('hidden');
                 }
             } catch (error) {
-                console.error('Save product error:', error);
                 errorDiv.textContent = 'Failed to save product: ' + error.message;
                 errorDiv.classList.remove('hidden');
             }
@@ -75,25 +71,13 @@
             const token = localStorage.getItem('jwt');
             const errorDiv = document.getElementById('error');
             if (!token) {
-                console.log('No JWT found on load, redirecting to login');
                 errorDiv.textContent = 'Please log in to access this page';
                 errorDiv.classList.remove('hidden');
-                setTimeout(() => { window.location.href = '/login?error=true'; }, 10000);
+                setTimeout(() => { window.location.href = '/login?error=true'; }, 5000);
                 return;
             }
         };
 
-
-<!--        window.onload = () => {-->
-<!--            loadProducts();-->
-<!--            const logoutButton = document.getElementById('logout-button');-->
-<!--            if (logoutButton) {-->
-<!--                console.log('Logout button found, adding event listener');-->
-<!--                logoutButton.addEventListener('click', logout);-->
-<!--            } else {-->
-<!--                console.error('Logout button not found in DOM');-->
-<!--            }-->
-<!--        };-->
     </script>
 </head>
 <body class="bg-gray-100 flex flex-col min-h-screen">
@@ -151,7 +135,7 @@
 
 <!-- Footer -->
 <footer class="bg-white shadow-inner mt-8 py-4 text-center text-gray-500 text-sm">
-    <p>&copy; 2024 Product Catalog. All rights reserved.</p>
+    <p>&copy; 2025 Product Catalog. All rights reserved.</p>
 </footer>
 </body>
 </html>

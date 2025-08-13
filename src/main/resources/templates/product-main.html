@@ -20,7 +20,6 @@
             errorDiv.textContent = '';
             errorDiv.classList.add('hidden');
             if (!token) {
-                console.log('No JWT found in localStorage, redirecting to login');
                 errorDiv.textContent = 'Please log in to access this page';
                 errorDiv.classList.remove('hidden');
                 setTimeout(() => { window.location.href = '/login?error=true'; }, 2000);
@@ -31,16 +30,13 @@
             if (minPrice) params.append('minPrice', minPrice);
             if (maxPrice) params.append('maxPrice', maxPrice);
             try {
-                console.log('Fetching products with token:', token.substring(0, 10) + '...');
                 const response = await fetch(`/api/products/search?${params}`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
                 });
-                console.log('Load products response status:', response.status);
                 if (response.ok) {
                     const products = await response.json();
-                    console.log('Loaded products:', products);
                     const productGrid = document.getElementById('productGrid');
                     productGrid.innerHTML = '';
                     if (products.length === 0) {
@@ -72,19 +68,16 @@
                         });
                     }
                 } else if (response.status === 401) {
-                    console.log('Unauthorized access to /api/products/search');
                     errorDiv.textContent = 'Session expired. Please log in again.';
                     errorDiv.classList.remove('hidden');
                     localStorage.removeItem('jwt');
                     setTimeout(() => { window.location.href = '/login?error=true'; }, 2000);
                 } else {
                     const errorText = await response.text();
-                    console.error('Load products failed:', response.status, errorText);
                     errorDiv.textContent = 'Failed to load products: ' + errorText;
                     errorDiv.classList.remove('hidden');
                 }
             } catch (error) {
-                console.error('Load products error:', error);
                 errorDiv.textContent = 'Failed to load products: ' + error.message;
                 errorDiv.classList.remove('hidden');
             }
@@ -97,7 +90,6 @@
             errorDiv.textContent = '';
             errorDiv.classList.add('hidden');
             if (!token) {
-                console.log('No JWT found for delete operation');
                 errorDiv.textContent = 'Please log in to access this page';
                 errorDiv.classList.remove('hidden');
                 setTimeout(() => { window.location.href = '/login?error=true'; }, 2000);
@@ -123,7 +115,6 @@
                     errorDiv.classList.remove('hidden');
                 }
             } catch (error) {
-                console.error('Delete product error:', error);
                 errorDiv.textContent = 'Failed to delete product: ' + error.message;
                 errorDiv.classList.remove('hidden');
             }
@@ -158,10 +149,8 @@
                         'Authorization': `Bearer ${token}`
                     }
                 });
-                console.log('Logout response status:', response.status);
                 window.location.href = '/login?logout=true';
             } catch (error) {
-                console.error('Logout error:', error);
                 window.location.href = '/login?logout=true';
             }
         }
@@ -169,7 +158,6 @@
         function checkTokenAndRedirect(url) {
             const token = localStorage.getItem('jwt');
             if (!token) {
-                console.log('No JWT found, redirecting to login');
                 window.location.href = '/login?error=true';
                 return false;
             }
@@ -181,7 +169,6 @@
             loadProducts();
             const logoutButton = document.getElementById('logout-button');
             if (logoutButton) {
-                console.log('Logout button found, adding event listener');
                 logoutButton.addEventListener('click', logout);
             } else {
                 console.error('Logout button not found in DOM');
@@ -250,7 +237,7 @@
 
 <!-- Footer -->
 <footer class="bg-white shadow-inner mt-8 py-4 text-center text-gray-500 text-sm">
-    <p>&copy; 2024 Product Catalog. All rights reserved.</p>
+    <p>&copy; 2025 Product Catalog. All rights reserved.</p>
 </footer>
 </body>
 </html>
